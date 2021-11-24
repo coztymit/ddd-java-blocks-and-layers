@@ -5,7 +5,6 @@ import pl.coztymit.exchange.accounting.domain.policy.PositionLimitPolicy;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 //Aggregate
@@ -60,7 +59,7 @@ public class Invoice {
         if (approveStatus.equals(ApproveStatus.DRAFT))
         {
             positions.add(position);
-            positionsValue = positionsValue.Add(position.positionValue());
+            positionsValue = positionsValue.add(position.positionValue());
         }
     }
 
@@ -72,7 +71,7 @@ public class Invoice {
         {
             positions.forEach(pos ->
                     {
-                            this.positionsValue = positionsValue.Add(pos.positionValue());
+                            this.positionsValue = positionsValue.add(pos.positionValue());
             this.positions.add(pos);
                 }
                     );
@@ -96,7 +95,7 @@ public class Invoice {
     //invariant
     private boolean valueLessOrEqualsMoneyLimit(Money newPositionValue)
     {
-        var oldAndNewPositionValue = positionsValue.Add(newPositionValue);
+        var oldAndNewPositionValue = positionsValue.add(newPositionValue);
         if (oldAndNewPositionValue.lessThan(positionValueLimit)) {
             return false;
         }

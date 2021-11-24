@@ -41,7 +41,7 @@ public class InvoiceFactory {
 
         possitionAttributes.forEach(pos ->
                 invoice.addPosition(
-                        new Position(new ProductNumber(pos.ProductNumber()), new Money(pos.ProductValue())),
+                        new Position(new ProductNumber(pos.productNumber()), new Money(pos.productValue())),
                         limitPolicy));
         return invoice;
     }

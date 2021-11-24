@@ -30,6 +30,8 @@ public class InvoiceApplicationService {
 
         List<PositionAttributes> invoicePositions = new ArrayList<>();
         invoicePositions.add(new InvoicePosition(new BigDecimal("100"), "PLN"));
+
+
         Invoice invoice = this.factory.createInvoice(invoicePositions);
         this.invoiceRepository.save(invoice);
 
@@ -82,7 +84,7 @@ public class InvoiceApplicationService {
         throw new RuntimeException();
     }
 
-    public final void ApproveInvoice(String number) {
+    public final void approveInvoice(String number) {
         Invoice invoice = invoiceRepository.get(new Number(number));
         invoice.approve();
         invoiceRepository.save(invoice);

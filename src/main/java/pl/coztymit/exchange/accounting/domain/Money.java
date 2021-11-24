@@ -13,6 +13,7 @@ class Money {
 
     public Money(BigDecimal value)
     {
+        //TODO dwa miejsca
         this.value = value;
         currency = Currency.DEFAULT;
     }
@@ -22,7 +23,7 @@ class Money {
         this.currency = currency;
     }
 
-    public Money Add(Money money)
+    public Money add(Money money)
     {
         if (!this.currency.equals(money.currency))
         {
@@ -32,7 +33,7 @@ class Money {
         return new Money(this.value.add(money.value), this.currency);
     }
 
-    public Money Sub(Money money)
+    public Money sub(Money money)
     {
         if (!this.currency.equals(money.currency))
         {
@@ -42,7 +43,7 @@ class Money {
         return new Money(this.value.subtract(money.value), this.currency);
     }
 
-    public Money Add(Money money, Money money2)
+    public Money add(Money money, Money money2)
     {
         if (!money2.currency.equals(money.currency))
         {

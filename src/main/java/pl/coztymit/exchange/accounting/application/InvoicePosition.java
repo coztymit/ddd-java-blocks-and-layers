@@ -16,17 +16,17 @@ public class InvoicePosition implements PositionAttributes{
         this.currency = currency;
     }
     @Override
-    public String ProductNumber() {
+    public String productNumber() {
         return number;
     }
 
     @Override
-    public BigDecimal ProductValue() {
+    public BigDecimal productValue() {
         return value;
     }
 
     @Override
-    public String ValueCurrency() {
+    public String valueCurrency() {
         return currency;
     }
 }
