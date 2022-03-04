@@ -1,22 +1,22 @@
 package pl.coztymit.exchange.accounting.domain;
 
-import pl.coztymit.exchange.accounting.domain.policy.PLNPositionLimitPolicy;
-import pl.coztymit.exchange.accounting.domain.policy.PositionLimitPolicy;
+import pl.coztymit.exchange.accounting.domain.policy.PLNLineLimitPolicy;
+import pl.coztymit.exchange.accounting.domain.policy.LineLimitPolicy;
 
 import java.util.List;
 
 public class BookKeeper {
     InvoiceFactory factory = new InvoiceFactory();
 
-    public Invoice createInvoice(List<PositionAttributes> positionAttributes, PositionLimitPolicy limitPolicy)
+    public Invoice createInvoice(List<LineAttributes> lineAttributes, LineLimitPolicy limitPolicy)
     {
         //Okresla polityki
-        return factory.createInvoice(positionAttributes, limitPolicy);
+        return factory.createInvoice(lineAttributes, limitPolicy);
     }
 
-    public Invoice createInvoiceCorrection(List<PositionAttributes> possitionAttributes)
+    public Invoice createInvoiceCorrection(List<LineAttributes> lineAttributes)
     {
-        return factory.createInvoice(possitionAttributes);
+        return factory.createInvoice(lineAttributes);
     }
 
     public Payment createPayment(Invoice invoice)
@@ -25,9 +25,9 @@ public class BookKeeper {
         return new Payment();
     }
 
-    public PositionLimitPolicy definePositionLimitPolicy()
+    public LineLimitPolicy definePositionLimitPolicy()
     {
         //tu powinna byc implementacja przypadkow okreslania polityki
-        return new PLNPositionLimitPolicy();
+        return new PLNLineLimitPolicy();
     }
 }

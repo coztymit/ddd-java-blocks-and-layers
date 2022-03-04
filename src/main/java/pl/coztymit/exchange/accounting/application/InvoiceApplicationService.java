@@ -1,10 +1,11 @@
 package pl.coztymit.exchange.accounting.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Service
+        ;
 import pl.coztymit.exchange.accounting.domain.*;
 import pl.coztymit.exchange.accounting.domain.Number;
-import pl.coztymit.exchange.accounting.domain.policy.PositionLimitPolicy;
+import pl.coztymit.exchange.accounting.domain.policy.LineLimitPolicy;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
@@ -13,32 +14,24 @@ import java.util.List;
 
 @Service
 public class InvoiceApplicationService {
-    private List<NotificationSender> senders;
+
 
     private InvoiceRepository invoiceRepository;
     private InvoiceFactory factory;
 
+
     @Autowired
     public InvoiceApplicationService(List<NotificationSender> senders, InvoiceRepository invoiceRepository) {
-        this.senders = senders;
         this.invoiceRepository = invoiceRepository;
         this.factory = new InvoiceFactory();
     }
 
+
     @Transactional
     public CreateStatus createInvoice() {
 
-        List<PositionAttributes> invoicePositions = new ArrayList<>();
-        invoicePositions.add(new InvoicePosition(new BigDecimal("100"), "PLN"));
-
-
-        Invoice invoice = this.factory.createInvoice(invoicePositions);
+        Invoice invoice = this.factory.createInvoice(null);
         this.invoiceRepository.save(invoice);
-
-        /*foreach (NotificationSender sender in senders) {
-          sender.sendNotification(invoice.ToString());
-        }
-        To oczywiscie moze zostac wzbogacone */
 
         return CreateStatus.Correct(invoice.invoiceNumber());
     }
@@ -47,10 +40,10 @@ public class InvoiceApplicationService {
     public CreateStatus createInvoice(String invoiceNumber)
     {
 
-        List<PositionAttributes> invoicePositions = new ArrayList<>();
-        invoicePositions.add(new InvoicePosition(new BigDecimal("100"), "PLN"));
+        List<LineAttributes> invoiceLines = new ArrayList<>();
+        invoiceLines.add(new InvoiceLine(new BigDecimal("100"), "PLN"));
 
-        Invoice invoice = factory.createInvoice(invoiceNumber, invoicePositions);
+        Invoice invoice = factory.createInvoice(invoiceNumber, invoiceLines);
         invoiceRepository.save(invoice);
 
 
@@ -65,17 +58,17 @@ public class InvoiceApplicationService {
     public final CreateStatus createInvoiceByBookKeeper() {
         // Transformacja z ebiektów komunikacji
 
-        List<PositionAttributes> invoicePositions = InvoiceApplicationService.createPosition();
+        List<LineAttributes> invoiceLines = InvoiceApplicationService.createLines();
         BookKeeper bookKeeper = new BookKeeper();
-        PositionLimitPolicy limitPolicy = bookKeeper.definePositionLimitPolicy();
-        Invoice invoice = bookKeeper.createInvoice(invoicePositions, limitPolicy);
+        LineLimitPolicy limitPolicy = bookKeeper.definePositionLimitPolicy();
+        Invoice invoice = bookKeeper.createInvoice(invoiceLines, limitPolicy);
         invoiceRepository.save(invoice);
         return CreateStatus.Correct(invoice.invoiceNumber());
     }
 
-    private static List<PositionAttributes> createPosition() {
-        List<PositionAttributes> invoicePositions =  new ArrayList<>();
-        invoicePositions.add(new InvoicePosition(new BigDecimal(100), "PLN"));
+    private static List<LineAttributes> createLines() {
+        List<LineAttributes> invoicePositions =  new ArrayList<>();
+        invoicePositions.add(new InvoiceLine(new BigDecimal(100), "PLN"));
         return invoicePositions;
     }
 
@@ -90,5 +83,6 @@ public class InvoiceApplicationService {
         invoiceRepository.save(invoice);
         BookKeeper bookKeeper = new BookKeeper();
         Payment payment = bookKeeper.createPayment(invoice);
+
     }
 }

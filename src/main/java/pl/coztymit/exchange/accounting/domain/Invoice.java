@@ -1,7 +1,7 @@
 package pl.coztymit.exchange.accounting.domain;
 
-import pl.coztymit.exchange.accounting.domain.exception.CannotAddPositionToApprovedInvoiceException;
-import pl.coztymit.exchange.accounting.domain.policy.PositionLimitPolicy;
+import pl.coztymit.exchange.accounting.domain.exception.CannotAddLineToApprovedInvoiceException;
+import pl.coztymit.exchange.accounting.domain.policy.LineLimitPolicy;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -13,16 +13,16 @@ public class Invoice {
     private Number number;
     private ApproveStatus approveStatus = ApproveStatus.DRAFT;
 
-    private Money positionsValue = Money.ZERO_PLN;
-    private List<Position> positions = new ArrayList<>();
+    private Money lineValue = Money.ZERO_PLN;
+    private List<Line> lines = new ArrayList<>();
     private List<Correction> correction;
     private Seller seller;
     private Buyer buyer;
 
+    //TO można zmienić na politykę
+    private static Money lineValueLimit = new Money(new BigDecimal("10000"));
     //TO należy zamienić na politykę
-    private static Money positionValueLimit = new Money(new BigDecimal("10000"));
-    //TO należy zamienić na politykę
-    private static int positionLimit = 10;
+    private static int lineLimit = 10;
 
 
     Invoice(Seller seller, Buyer buyer)
@@ -45,12 +45,10 @@ public class Invoice {
         this.approveStatus = ApproveStatus.APPROVED;
         return ApproveStatus.APPROVED;
     }
-
-    void addPosition(Position position, PositionLimitPolicy positionLimitPolicy)
+    void addLine(Line line, LineLimitPolicy lineLimitPolicy)
     {
-        //InvariantCheck(position);
 
-        if(!positionLimitPolicy.lessOrEqualsLimit(this.positions.size() + 1))
+        if(!lineLimitPolicy.lessOrEqualsLimit(this.lines.size() + 1))
         {
 
             throw new RuntimeException();
@@ -58,57 +56,57 @@ public class Invoice {
 
         if (approveStatus.equals(ApproveStatus.DRAFT))
         {
-            positions.add(position);
-            positionsValue = positionsValue.add(position.positionValue());
+            lines.add(line);
+            lineValue = lineValue.add(line.lineValue());
         }
     }
 
-    void addPositions(List<Position> positions)
+    void addLines(List<Line> lines)
     {
         //sprawdzenie invariant
 
         if (approveStatus.equals(ApproveStatus.DRAFT))
         {
-            positions.forEach(pos ->
+            lines.forEach(line ->
                     {
-                            this.positionsValue = positionsValue.add(pos.positionValue());
-            this.positions.add(pos);
-                }
-                    );
+                            this.lineValue = lineValue.add(line.lineValue());
+                            this.lines.add(line);
+                 }
+);
         }
         else
         {
-            throw new CannotAddPositionToApprovedInvoiceException();
+            throw new CannotAddLineToApprovedInvoiceException();
         }
     }
 
 
     //invariant
-    private boolean lessOrEqualsPositionLimit(int newPositionCount)
+    private boolean lessOrEqualsLineLimit(int newLineCount)
     {
-        if(this.positions.size() + newPositionCount > 10)
+        if(this.lines.size() + newLineCount > 10)
         {
             return false;
         }
         return true;
     }
     //invariant
-    private boolean valueLessOrEqualsMoneyLimit(Money newPositionValue)
+    private boolean valueLessOrEqualsMoneyLimit(Money newLineValue)
     {
-        var oldAndNewPositionValue = positionsValue.add(newPositionValue);
-        if (oldAndNewPositionValue.lessThan(positionValueLimit)) {
+        var oldAndNewLineValue = lineValue.add(newLineValue);
+        if (oldAndNewLineValue.lessThan(lineValueLimit)) {
             return false;
         }
         return true;
     }
 
-    private void invariantCheck(Position position)
+    private void invariantCheck(Line line)
     {
-        if (!lessOrEqualsPositionLimit(1))
+        if (!lessOrEqualsLineLimit(1))
         {
             throw new RuntimeException();
         }
-        if (!valueLessOrEqualsMoneyLimit(position.positionValue()))
+        if (!valueLessOrEqualsMoneyLimit(line.lineValue()))
         {
             throw new RuntimeException();
         }
@@ -122,6 +120,6 @@ public class Invoice {
     public String toString()
     {
         return number.toString() + " : " + approveStatus.toString() + " : "
-                + positionsValue.toString() + " : " + seller.toString();
+                + lineValue.toString() + " : " + seller.toString();
     }
 }

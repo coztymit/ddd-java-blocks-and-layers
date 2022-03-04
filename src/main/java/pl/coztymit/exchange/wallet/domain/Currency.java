@@ -1,7 +1,7 @@
-package pl.coztymit.exchange.accounting.domain;
+package pl.coztymit.exchange.wallet.domain;
 
 import java.util.Objects;
-//VO
+
 public class Currency {
     private String value;
     public static Currency DEFAULT = new Currency("PLN");

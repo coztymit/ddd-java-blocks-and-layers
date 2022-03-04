@@ -1,6 +1,6 @@
 package pl.coztymit.exchange.accounting.domain.policy;
 
-public class EURPositionLimitPolicy implements PositionLimitPolicy{
+public class EURLineLimitPolicy implements LineLimitPolicy {
 
     private int positionLimit = 5;
 

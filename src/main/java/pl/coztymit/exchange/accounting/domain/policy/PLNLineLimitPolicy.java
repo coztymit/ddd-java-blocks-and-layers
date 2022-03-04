@@ -1,6 +1,6 @@
 package pl.coztymit.exchange.accounting.domain.policy;
 
-public class PLNPositionLimitPolicy implements PositionLimitPolicy{
+public class PLNLineLimitPolicy implements LineLimitPolicy {
 
     private int positionLimit = 10;
 
